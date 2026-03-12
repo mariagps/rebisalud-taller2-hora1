@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<title>PubMed con la IA como copiloto | REBISALUD</title>
+<style>
+:root {
+  --navy: #1B3A5C;
+  --blue: #B45309;
+  --teal: #D97706;
+  --light-blue: #FFF7ED;
+  --gray-bg: #F0F2F5;
+  --gray-text: #64748B;
+  --white: #FFFFFF;
+  --shadow: 0 4px 24px rgba(27, 58, 92, 0.10);
+  --shadow-hover: 0 8px 32px rgba(27, 58, 92, 0.16);
+  --radius: 12px;
+  --sidebar-w: 260px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'Montserrat', -apple-system, sans-serif;
+  background: var(--gray-bg);
+  color: var(--navy);
+  min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 40%, var(--teal) 70%, #FEF3C7 90%);
+  color: white;
+  padding: 2rem 2rem 1.5rem;
+  position: relative;
+  margin-left: var(--sidebar-w);
+}
+.header-logo {
+  position: absolute;
+  top: 0; right: 1.5rem;
+  height: 100%;
+  padding: 0.8rem 0;
+  opacity: 0.92;
+}
+.header-text { padding-right: 130px; }
+.header-congress {
+  font-size: 0.8rem;
+  font-weight: 300;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin-bottom: 0.4rem;
+}
+.header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-bottom: 0.4rem;
+}
+.header-meta {
+  font-size: 0.82rem;
+  font-weight: 300;
+  opacity: 0.8;
+  line-height: 1.5;
+}
+.header-meta strong { font-weight: 500; opacity: 1; }
+.header-meta a { color: white; text-decoration: underline; text-underline-offset: 2px; }
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--sidebar-w);
+  height: 100vh;
+  background: var(--white);
+  border-right: 1px solid #E2E8F0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-header {
+  padding: 1.2rem 1rem 0.8rem;
+  border-bottom: 1px solid #E2E8F0;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gray-text);
+}
+.sidebar-nav { padding: 0.6rem 0; flex: 1; }
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  text-decoration: none;
+  color: var(--navy);
+  font-size: 0.8rem;
+  font-weight: 400;
+  border-left: 3px solid transparent;
+  transition: all 0.2s;
+}
+.sidebar-nav a:hover {
+  background: var(--gray-bg);
+  border-left-color: var(--teal);
+}
+.sidebar-nav a.active {
+  background: var(--light-blue);
+  border-left-color: var(--blue);
+  font-weight: 600;
+}
+.sidebar-nav a .nav-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  background: var(--gray-bg);
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.sidebar-nav a.active .nav-num {
+  background: var(--blue);
+  color: white;
+}
+
+/* ===== MAIN CONTENT ===== */
+.main {
+  margin-left: var(--sidebar-w);
+  padding: 2rem 2.5rem 4rem;
+  max-width: calc(var(--sidebar-w) + 900px);
+}
+
+/* ===== BLOCKS ===== */
+.block {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  scroll-margin-top: 1.5rem;
+}
+.block-header {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+.block-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.block-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+.block-meta {
+  font-size: 0.78rem;
+  color: var(--gray-text);
+  font-weight: 400;
+  margin-left: 0.3rem;
+}
+.block p {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  margin-bottom: 1rem;
+}
+.block h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 1.5rem 0 0.6rem;
+  color: var(--navy);
+}
+.block h4 {
+  font-size: 0.88rem;
+  font-weight: 600;
+  margin: 1.2rem 0 0.4rem;
+  color: var(--blue);
+}
+.block ul, .block ol {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  margin: 0 0 1rem 1.2rem;
+}
+
+/* ===== PROMPT BOXES ===== */
+.prompt-box {
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-left: 4px solid var(--teal);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  position: relative;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+.prompt-box .copy-btn {
+  position: absolute;
+  top: 0.5rem; right: 0.5rem;
+  background: var(--teal);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.prompt-box .copy-btn:hover { background: #008F85; }
+.prompt-box .copy-btn.copied { background: var(--navy); }
+
+/* ===== INSTRUCTIONS BOX ===== */
+.instructions-box {
+  background: #F8FAFC;
+  border: 2px solid var(--blue);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin: 1rem 0;
+  position: relative;
+  font-size: 0.82rem;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.instructions-box .copy-btn {
+  position: sticky;
+  top: 0; float: right;
+  background: var(--blue);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  z-index: 2;
+}
+.instructions-box .copy-btn:hover { background: var(--navy); }
+.instructions-box .copy-btn.copied { background: var(--teal); }
+
+/* ===== TOOL LINK ===== */
+.tool-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: linear-gradient(135deg, var(--blue), var(--teal));
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all 0.2s;
+  margin: 0.5rem 0.5rem 0.5rem 0;
+}
+.tool-link:hover { transform: translateY(-1px); box-shadow: var(--shadow-hover); }
+
+/* ===== TABLES ===== */
+.block table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin: 1rem 0;
+}
+.block th {
+  background: var(--light-blue);
+  text-align: left;
+  padding: 0.6rem 0.8rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+  border-bottom: 2px solid var(--blue);
+}
+.block td {
+  padding: 0.55rem 0.8rem;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+/* ===== CASE CARD ===== */
+.case-card {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+  border: 1px solid #F59E0B;
+  border-radius: var(--radius);
+  padding: 1.2rem 1.5rem;
+  margin: 1rem 0;
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+.case-card strong { color: #92400E; }
+
+/* ===== TIP BOX ===== */
+.tip-box {
+  background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+  border: 1px solid #22C55E;
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.tip-box strong { color: #166534; }
+
+/* ===== WARNING BOX ===== */
+.warning-box {
+  background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%);
+  border: 1px solid #F97316;
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  margin: 1rem 0;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.warning-box strong { color: #9A3412; }
+
+/* ===== STEP INDICATOR ===== */
+.step {
+  display: flex;
+  gap: 1rem;
+  margin: 1.2rem 0;
+  padding: 1rem;
+  background: var(--light-blue);
+  border-radius: 8px;
+  align-items: flex-start;
+}
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px; height: 30px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.step-content {
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+.step-content strong { color: var(--navy); }
+
+/* ===== DETAILS / COLLAPSIBLE ===== */
+details {
+  margin: 1rem 0;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+details summary {
+  padding: 0.8rem 1.2rem;
+  background: var(--light-blue);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--blue);
+  cursor: pointer;
+  list-style: none;
+}
+details summary::before {
+  content: '\25B6';
+  display: inline-block;
+  margin-right: 0.5rem;
+  font-size: 0.7rem;
+  transition: transform 0.2s;
+}
+details[open] summary::before {
+  transform: rotate(90deg);
+}
+details .details-content {
+  padding: 1rem 1.2rem;
+  font-size: 0.85rem;
+  line-height: 1.65;
+  background: #FAFBFC;
+}
+details .details-content p {
+  margin-bottom: 0.8rem;
+}
+details .details-content code {
+  background: #E2E8F0;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.82rem;
+}
+details .details-content ol {
+  margin: 0.5rem 0 0.8rem 1.2rem;
+}
+
+/* ===== SESSION BANNER ===== */
+.session-banner {
+  margin-left: var(--sidebar-w);
+  background: var(--white);
+  border-bottom: 3px solid var(--teal);
+  padding: 1.5rem 2.5rem;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+}
+.session-num {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+.session-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  margin-left: var(--sidebar-w);
+  padding: 2rem;
+  text-align: center;
+  border-top: 1px solid #E2E8F0;
+  background: var(--white);
+}
+.footer img { height: 30px; opacity: 0.6; margin-bottom: 0.5rem; }
+.footer p {
+  font-size: 0.75rem;
+  color: var(--gray-text);
+  line-height: 1.6;
+}
+.footer a { color: var(--blue); text-decoration: none; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .header, .main, .footer, .session-banner { margin-left: 0; }
+  .header-text { padding-right: 80px; }
+  .header-logo { height: 60px; top: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<nav class="sidebar">
+  <div class="sidebar-header">Sesión 2 &middot; Hora 1</div>
+  <div class="sidebar-nav">
+    <a href="#intro"><span class="nav-num">0</span> Contexto</a>
+    <a href="#proyecto"><span class="nav-num">1</span> Crear proyecto ChatGPT</a>
+    <a href="#instrucciones"><span class="nav-num">2</span> Las instrucciones</a>
+    <a href="#ejercicio1"><span class="nav-num">3</span> Ejercicio: telerehabilitación</a>
+    <a href="#mesh"><span class="nav-num">4</span> Validar MeSH</a>
+    <a href="#ejercicio2"><span class="nav-num">5</span> Ejercicio: vuestra pregunta</a>
+    <a href="#press"><span class="nav-num">6</span> Checklist PRESS</a>
+    <a href="#resumen"><span class="nav-num">7</span> Resumen y recursos</a>
+  </div>
+</nav>
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <img src="alterbiblio-logo.png" alt="AlterBiblio" class="header-logo">
+  <div class="header-text">
+    <div class="header-congress">REBISALUD &middot; Sesión 2</div>
+    <h1>Búsqueda</h1>
+    <div class="header-meta">
+      <strong><a href="https://www.linkedin.com/in/mariagps/" target="_blank">María García-Puente</a></strong> &middot; AlterBiblio<br>
+      Taller de inteligencia artificial para bibliotecarios de ciencias de la salud &middot; 12 marzo 2026
+    </div>
+  </div>
+</header>
+
+<!-- ===== SESSION BANNER ===== -->
+<div class="session-banner">
+  <span class="session-title">PubMed con la IA como copiloto</span>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div class="main">
+
+  <!-- INTRO -->
+  <section class="block" id="intro">
+    <div class="block-header">
+      <span class="block-num">0</span>
+      <div><span class="block-title">ChatGPT como copiloto de búsquedas</span></div>
+    </div>
+
+    <p>En la sesión anterior formulamos preguntas PICO con ayuda de un LLM. Ahora vamos a dar el siguiente paso: <strong>construir estrategias de búsqueda para PubMed</strong> con ChatGPT como copiloto.</p>
+
+    <p>La idea no es que ChatGPT busque por nosotros, sino que nos ayude en las partes más tediosas del proceso:</p>
+
+    <ul>
+      <li>Generar sinónimos y variantes de los términos</li>
+      <li>Traducir los conceptos al inglés</li>
+      <li>Proponer descriptores MeSH (que nosotros validaremos)</li>
+      <li>Estructurar la estrategia con la sintaxis correcta de PubMed</li>
+      <li>Revisar la estrategia según la metodología PRESS</li>
+    </ul>
+
+    <div class="warning-box">
+      <strong>Importante:</strong> ChatGPT puede inventar descriptores MeSH que no existen. Por eso, la validación manual en el MeSH Browser es un paso obligatorio que nunca debemos saltarnos. El bibliotecario sigue siendo quien controla la calidad de la estrategia.
+    </div>
+
+    <p>Para esta sesión vamos a crear un <strong>proyecto en ChatGPT</strong> con instrucciones específicas para búsquedas en PubMed. Así ChatGPT sabrá exactamente cómo ayudarnos cada vez que le pidamos construir una estrategia.</p>
+  </section>
+
+  <!-- CREAR PROYECTO -->
+  <section class="block" id="proyecto">
+    <div class="block-header">
+      <span class="block-num">1</span>
+      <div><span class="block-title">Crear un proyecto en ChatGPT</span><span class="block-meta">10 min</span></div>
+    </div>
+
+    <p>Los <strong>proyectos</strong> de ChatGPT permiten guardar instrucciones y archivos que se aplican automáticamente a todas las conversaciones del proyecto. No hace falta repetir el contexto cada vez.</p>
+
+    <div class="step">
+      <span class="step-num">1</span>
+      <div class="step-content"><strong>Abrir ChatGPT</strong> en el navegador o la app. Ir a la barra lateral izquierda y buscar &laquo;Projects&raquo; o &laquo;Proyectos&raquo;.</div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span>
+      <div class="step-content"><strong>Crear nuevo proyecto:</strong> pulsar &laquo;+ New project&raquo;. Nombre sugerido: <em>&laquo;Copiloto PubMed&raquo;</em></div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">3</span>
+      <div class="step-content"><strong>Configurar instrucciones:</strong> pulsar el icono de configuración del proyecto y pegar las instrucciones de la sección siguiente.</div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">4</span>
+      <div class="step-content"><strong>Subir los archivos de referencia:</strong> en la configuración del proyecto, subid los 3 archivos <code>.md</code> que os facilitamos (sintaxis PubMed, estrategia exhaustiva y checklist PRESS). Así ChatGPT los tendrá como contexto permanente.</div>
+    </div>
+
+    <table>
+      <thead><tr><th>Aspecto</th><th>Chat normal</th><th>Proyecto</th></tr></thead>
+      <tbody>
+        <tr><td>Instrucciones</td><td>Hay que repetirlas</td><td>Se aplican automáticamente</td></tr>
+        <tr><td>Archivos</td><td>Hay que subirlos cada vez</td><td>Permanecen disponibles</td></tr>
+        <tr><td>Organización</td><td>Todo mezclado</td><td>Separado por tema</td></tr>
+        <tr><td>Ideal para</td><td>Preguntas puntuales</td><td>Trabajo continuado</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip-box">
+      <strong>Nota:</strong> Los proyectos están disponibles en todos los planes de ChatGPT, incluido el gratuito. No necesitáis plan de pago para esta actividad.
+    </div>
+  </section>
+
+  <!-- INSTRUCCIONES -->
+  <section class="block" id="instrucciones">
+    <div class="block-header">
+      <span class="block-num">2</span>
+      <div><span class="block-title">Las instrucciones del copiloto</span><span class="block-meta">5 min</span></div>
+    </div>
+
+    <p>Copiad estas instrucciones y pegadlas en la configuración del proyecto. Son las que convierten a ChatGPT en un copiloto de búsquedas PubMed:</p>
+
+    <div class="instructions-box">
+      <button class="copy-btn" onclick="copyInstructions(this)">Copiar</button>Rol:
+Eres experto en documentación científica especializado en crear estrategias avanzadas de búsqueda para PubMed, combinando términos MeSH validados con texto libre. Tu estilo es claro, conversacional y profesional. Actúa como un documentalista que guía al investigador en cada paso.
+
+Objetivo:
+Construir estrategias para PubMed con alto recall, precisión semántica, lógica sólida y correcta sintaxis.
+
+Proceso de construcción de la estrategia:
+
+Paso 0: Análisis y estructura
+- Analiza claramente la pregunta y divídela en bloques conceptuales (formato PICO si aplica: Población, Intervención, Comparador, Outcome).
+- Valida la estructura con el usuario antes de continuar.
+
+Paso 1: Extracción de términos
+- Localiza todos los términos relacionados y sinónimos de cada apartado PICO.
+- Incluye variantes ortográficas, abreviaturas y sinónimos habituales.
+
+Paso 2: Traducción
+- Traduce internamente toda la pregunta y los términos al inglés.
+- Presenta al usuario la traducción para validación.
+
+Paso 3: Propuesta de términos MeSH (requiere validación del usuario)
+- Para cada bloque PICO, propón los descriptores MeSH que consideres más adecuados.
+- Presenta los términos en una tabla:
+  | Bloque PICO | Término propuesto | MeSH sugerido | ¿Validado? (sí/no) |
+- Indica al usuario que debe validar CADA término en el MeSH Browser (meshb.nlm.nih.gov):
+  1. Si aparece como Descriptor (ID que empieza por D): es válido para [MeSH Terms]. Anotar los Entry Terms (sinónimos oficiales)
+  2. Si NO aparece o es un Supplementary Concept (ID que empieza por C): usarlo sólo como texto libre [tiab] o [tw]
+- NO continúes hasta que el usuario confirme la validación.
+- IMPORTANTE: Tú NO puedes validar descriptores MeSH. Sólo el usuario puede hacerlo en el MeSH Browser.
+
+Paso 4: Construcción técnica de la estrategia
+Reglas de sintaxis PubMed:
+- Descriptores validados: "Término"[MeSH Terms]
+- Texto libre en título/abstract: término[tiab]
+- Texto libre amplio: término[tw]
+- Truncamiento: termin*[tiab] (para capturar variantes)
+- Proximidad: "término1 término2"[tiab:~3] (palabras a máximo 3 de distancia)
+- Proximidad SÓLO en texto libre, NUNCA en MeSH
+- Usar [tiab], NO [Title/Abstract]
+
+Estructura modular:
+(Bloque Población: MeSH OR texto libre)
+AND
+(Bloque Intervención: MeSH OR texto libre)
+AND
+(Bloque Comparador/Contexto: MeSH OR texto libre)  -- si aplica
+AND
+(Bloque Outcome: MeSH OR texto libre)  -- si aplica
+
+Dentro de cada bloque: sinónimos unidos con OR.
+Entre bloques: unidos con AND.
+
+Paso 5: Presentación de la estrategia
+- Presenta la estrategia completa, lista para copiar y pegar en PubMed.
+
+Paso 6: Revisión PRESS
+Revisa la estrategia según la metodología PRESS 2015:
+- ¿Se han traducido correctamente los conceptos PICO?
+- ¿Se combinan texto libre y vocabulario controlado (MeSH)?
+- ¿Los operadores booleanos (AND, OR) están correctamente aplicados?
+- ¿Se ha usado truncamiento de forma apropiada?
+- ¿La ortografía y la sintaxis son correctas para PubMed?
+- ¿Los límites y filtros son apropiados?
+Presenta las posibles mejoras al usuario.
+
+REGLAS GENERALES:
+- Responde SIEMPRE en español
+- Los términos de búsqueda van SIEMPRE en inglés
+- NO inventes descriptores MeSH: si no estás seguro, indica que se valide en meshb.nlm.nih.gov
+- Pide confirmación al usuario en cada paso antes de continuar
+- Recuerda SIEMPRE al usuario que revise el Outcome clínico con atención</div>
+
+    <div class="tip-box">
+      <strong>Qué hacen estas instrucciones:</strong> Le dicen a ChatGPT que siga un proceso paso a paso (PICO &#8594; términos &#8594; traducción &#8594; MeSH &#8594; estrategia &#8594; revisión PRESS) y que pida confirmación en cada paso. Así el bibliotecario mantiene el control en todo momento.
+    </div>
+
+    <h3>Archivos de referencia para subir al proyecto</h3>
+
+    <p>Subid estos 3 archivos <code>.md</code> al proyecto. Son documentos de referencia en acceso abierto que hemos convertido a formato Markdown para que ChatGPT los use como contexto:</p>
+
+    <ul>
+      <li><a href="referencia_sintaxis_pubmed.md" download><strong>referencia_sintaxis_pubmed.md</strong></a> &mdash; Sintaxis completa de PubMed: etiquetas de campo, booleanos, truncamiento, proximidad, filtros (fuente: PubMed Help, NLM)</li>
+      <li><a href="referencia_estrategia_exhaustiva_pubmed.md" download><strong>referencia_estrategia_exhaustiva_pubmed.md</strong></a> &mdash; Cómo construir una búsqueda exhaustiva combinando MEDLINE y No-MEDLINE (fuente: McKeever et al., 2015, CC BY-NC 3.0)</li>
+      <li><a href="referencia_PRESS_checklist.md" download><strong>referencia_PRESS_checklist.md</strong></a> &mdash; Los 6 elementos de la checklist PRESS para revisar estrategias, con ejemplos de errores frecuentes (fuente: McGowan et al., 2016 / CADTH)</li>
+    </ul>
+
+    <details>
+      <summary>¿Cómo hemos preparado estos archivos?</summary>
+      <div class="details-content">
+        <p>Los tres documentos originales son PDFs de acceso abierto publicados por la NLM, CADTH y en PubMed Central. Para convertirlos en archivos útiles como contexto de un proyecto ChatGPT, hemos usado la propia IA:</p>
+        <ol>
+          <li>Localizamos los documentos originales en sus fuentes públicas</li>
+          <li>Le pedimos a un LLM que extrajera el contenido relevante de cada uno</li>
+          <li>Convertimos ese contenido a formato Markdown (<code>.md</code>), que es texto plano estructurado con encabezados, listas y tablas</li>
+          <li>Revisamos manualmente el resultado para asegurar que la información es correcta</li>
+        </ol>
+        <p>El formato <code>.md</code> es más ligero que un PDF y ChatGPT lo procesa mejor como contexto. Podéis hacer lo mismo con cualquier documento de referencia que queráis incorporar a vuestros proyectos: pedirle a ChatGPT que os lo convierta a Markdown y subirlo como archivo del proyecto.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- EJERCICIO 1 -->
+  <section class="block" id="ejercicio1">
+    <div class="block-header">
+      <span class="block-num">3</span>
+      <div><span class="block-title">Ejercicio guiado: telerehabilitación tras ictus</span><span class="block-meta">20 min</span></div>
+    </div>
+
+    <p>Vamos a construir juntos una estrategia de búsqueda completa, paso a paso. Aseguraos de estar dentro del proyecto &laquo;Copiloto PubMed&raquo; que acabamos de crear.</p>
+
+    <div class="case-card">
+      <strong>Escenario:</strong> Un neurólogo de vuestro hospital os pide ayuda para buscar evidencia sobre si la telerehabilitación es tan efectiva como la rehabilitación presencial para la recuperación funcional en pacientes que han sufrido un ictus.
+    </div>
+
+    <h3>Empezar: pedir el análisis PICO</h3>
+    <p>Copiad este prompt en el proyecto:</p>
+
+    <div class="prompt-box">
+      <button class="copy-btn" onclick="copyPrompt(this)">Copiar</button>Necesito construir una estrategia de búsqueda en PubMed para esta pregunta:
+
+"¿Es efectiva la telerehabilitación comparada con la rehabilitación presencial para la recuperación funcional en pacientes tras ictus?"
+
+Empieza por el paso 0: analiza la pregunta y propón la estructura PICO.</div>
+
+    <p>ChatGPT debería devolver algo como:</p>
+    <table>
+      <thead><tr><th>Componente</th><th>Definición</th></tr></thead>
+      <tbody>
+        <tr><td><strong>P</strong> (Población)</td><td>Pacientes adultos tras ictus / accidente cerebrovascular</td></tr>
+        <tr><td><strong>I</strong> (Intervención)</td><td>Telerehabilitación / rehabilitación a distancia</td></tr>
+        <tr><td><strong>C</strong> (Comparador)</td><td>Rehabilitación presencial / convencional</td></tr>
+        <tr><td><strong>O</strong> (Outcome)</td><td>Recuperación funcional / capacidad funcional</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Siguiente: pedir términos y traducción</h3>
+    <p>Si la estructura PICO es correcta, responded:</p>
+
+    <div class="prompt-box">
+      <button class="copy-btn" onclick="copyPrompt(this)">Copiar</button>Correcto. Continúa con el paso 1: extrae todos los términos y sinónimos para cada bloque PICO.</div>
+
+    <h3>Siguiente: validar los MeSH propuestos</h3>
+    <p>ChatGPT os presentará una tabla con los descriptores MeSH que propone para cada bloque. Ahora toca <strong>verificar que existen realmente</strong>. Escribid cada término en esta caja y pulsad el botón para comprobarlo directamente en el MeSH Browser:</p>
+
+    <div style="display:flex; gap:0.5rem; align-items:center; margin:1rem 0;">
+      <input type="text" id="mesh-term" placeholder="Ej: Telerehabilitation" style="flex:1; padding:0.6rem 1rem; border:2px solid var(--blue); border-radius:8px; font-family:inherit; font-size:0.9rem;">
+      <button onclick="window.open('https://meshb.nlm.nih.gov/search?searchMethod=SubString&searchInField=termDescriptor&sort=&size=20&searchType=exactMatch&from=0&q=' + encodeURIComponent(document.getElementById('mesh-term').value.trim()), '_blank')" style="padding:0.6rem 1.2rem; background:linear-gradient(135deg, var(--blue), var(--teal)); color:white; border:none; border-radius:8px; font-family:inherit; font-size:0.85rem; font-weight:600; cursor:pointer; white-space:nowrap;">Buscar en MeSH</button>
+    </div>
+
+    <p>En la página de resultados, comprobad:</p>
+    <ul>
+      <li>Si aparece como <strong>Descriptor (D)</strong>: es válido para [MeSH Terms]. Anotad también los Entry Terms.</li>
+      <li>Si <strong>no aparece</strong> o es un Supplementary Concept (C): no es válido. Usadlo sólo como texto libre.</li>
+    </ul>
+
+    <div class="warning-box">
+      <strong>Atención:</strong> Este es el paso donde aportáis más valor como bibliotecarios. ChatGPT propone, vosotros verificáis. Cada término lleva 10 segundos de comprobar.
+    </div>
+
+    <h3>Siguiente: confirmar y pedir la estrategia final</h3>
+    <p>Comunicad a ChatGPT el resultado de vuestra validación:</p>
+
+    <div class="prompt-box">
+      <button class="copy-btn" onclick="copyPrompt(this)">Copiar</button>He validado los términos. Estos son los resultados:
+- "Stroke"[MeSH Terms]: VÁLIDO
+- "Telerehabilitation"[MeSH Terms]: VÁLIDO
+- "Recovery of Function"[MeSH Terms]: VÁLIDO
+- [completar con vuestros resultados]
+
+Construye la estrategia completa (paso 4) y preséntala lista para copiar en PubMed.</div>
+
+    <h3>Por último: ejecutar en PubMed</h3>
+    <p>Copiad la estrategia que os devuelva ChatGPT y pegadla en PubMed Advanced Search:</p>
+
+    <a href="https://pubmed.ncbi.nlm.nih.gov/advanced/" target="_blank" class="tool-link">&#8599; PubMed Advanced Search</a>
+
+    <p>Compartid con ChatGPT el número de resultados y pedidle la revisión PRESS:</p>
+
+    <div class="prompt-box">
+      <button class="copy-btn" onclick="copyPrompt(this)">Copiar</button>La búsqueda ha devuelto [NÚMERO] resultados. Haz la revisión PRESS (paso 6) y dime si hay algo que mejorar.</div>
+  </section>
+
+  <!-- VALIDAR MESH -->
+  <section class="block" id="mesh">
+    <div class="block-header">
+      <span class="block-num">4</span>
+      <div><span class="block-title">Cómo validar los términos MeSH</span><span class="block-meta">5 min</span></div>
+    </div>
+
+    <p>ChatGPT es bueno generando sinónimos y proponiendo descriptores MeSH, pero <strong>no puede verificar si un descriptor existe realmente</strong>. Esa es la parte que hacéis vosotros. Usad el buscador de aquí abajo: escribid el término que os ha propuesto ChatGPT y comprobad si existe como descriptor.</p>
+
+    <div class="tip-box">
+      <strong>Guardadlo en favoritos:</strong> Podéis guardar la web del MeSH Browser en los marcadores del navegador para tenerlo siempre a mano: <a href="https://meshb.nlm.nih.gov/" target="_blank">meshb.nlm.nih.gov</a>
+    </div>
+
+    <h3>Validación rápida</h3>
+
+    <p>Escribid el término que os ha propuesto ChatGPT y comprobadlo directamente:</p>
+
+    <div style="display:flex; gap:0.5rem; align-items:center; margin:1rem 0;">
+      <input type="text" id="mesh-term-2" placeholder="Ej: Stroke" style="flex:1; padding:0.6rem 1rem; border:2px solid var(--blue); border-radius:8px; font-family:inherit; font-size:0.9rem;">
+      <button onclick="window.open('https://meshb.nlm.nih.gov/search?searchMethod=SubString&searchInField=termDescriptor&sort=&size=20&searchType=exactMatch&from=0&q=' + encodeURIComponent(document.getElementById('mesh-term-2').value.trim()), '_blank')" style="padding:0.6rem 1.2rem; background:linear-gradient(135deg, var(--blue), var(--teal)); color:white; border:none; border-radius:8px; font-family:inherit; font-size:0.85rem; font-weight:600; cursor:pointer; white-space:nowrap;">Buscar en MeSH</button>
+    </div>
+
+    <div class="step">
+      <span class="step-num">1</span>
+      <div class="step-content"><strong>Si aparece como Descriptor (D):</strong> el término es válido para [MeSH Terms]. Aprovechad para revisar los <em>Entry Terms</em>: son sinónimos oficiales que podéis añadir al bloque de texto libre.</div>
+    </div>
+
+    <div class="step">
+      <span class="step-num">2</span>
+      <div class="step-content"><strong>Si NO aparece o es un Supplementary Concept (C):</strong> el término no sirve como [MeSH Terms]. Usadlo sólo como texto libre [tiab].</div>
+    </div>
+
+    <div class="warning-box">
+      <strong>Regla de oro:</strong> Si tenéis dudas sobre cualquier descriptor, comprobadlo vosotros en el MeSH Browser. Lleva 10 segundos y evita errores en la estrategia. La automatización ayuda, la verificación protege.
+    </div>
+
+    <div class="tip-box">
+      <strong>Otra opción:</strong> En la tienda de GPTs de ChatGPT podéis buscar GPTs personalizados que ya integran la validación de descriptores MeSH. Buscad &laquo;MeSH&raquo; en <a href="https://chatgpt.com/gpts" target="_blank">Explore GPTs</a> y probad los que tengan buenas valoraciones. Algunos conectan directamente con la API de la NLM y pueden validar los términos sin salir de la conversación.
+    </div>
+
+    <h3>Errores frecuentes de ChatGPT con MeSH</h3>
+    <table>
+      <thead><tr><th>ChatGPT propone</th><th>Realidad</th><th>Qué hacer</th></tr></thead>
+      <tbody>
+        <tr><td>"Artificial Intelligence"[MeSH Terms]</td><td>Existe como descriptor</td><td>Usar como MeSH</td></tr>
+        <tr><td>"Machine Learning"[MeSH Terms]</td><td>Existe como descriptor</td><td>Usar como MeSH</td></tr>
+        <tr><td>"Deep Learning"[MeSH Terms]</td><td>Existe como descriptor (desde 2019)</td><td>Usar como MeSH</td></tr>
+        <tr><td>"Large Language Models"[MeSH Terms]</td><td>Comprobar: puede no existir aún</td><td>Verificar en MeSH Browser</td></tr>
+        <tr><td>"Digital Health"[MeSH Terms]</td><td>Comprobar: puede ser Supplementary</td><td>Verificar en MeSH Browser</td></tr>
+      </tbody>
+    </table>
+
+    <div class="tip-box">
+      <strong>Truco:</strong> Los Entry Terms del MeSH Browser son una mina de sinónimos. Si validáis "Stroke"[MeSH], veréis que tiene entry terms como "Cerebrovascular Accident", "CVA" o "Brain Vascular Accident". Añadidlos al bloque de texto libre para mejorar la cobertura.
+    </div>
+
+    <div class="tip-box">
+      <strong>Para llevároslo a casa:</strong> Este mismo flujo funciona sin el curso. Cread un proyecto en ChatGPT, pegad las instrucciones de la sección 2, y cada vez que le pidáis una estrategia os propondrá los descriptores MeSH en una tabla. Para validarlos, usad esta URL cambiando el término del final:<br><br>
+      <code>https://meshb.nlm.nih.gov/search?searchMethod=SubString&amp;searchInField=termDescriptor&amp;sort=&amp;size=20&amp;searchType=exactMatch&amp;from=0&amp;q=VUESTRO_TERMINO</code>
+    </div>
+  </section>
+
+  <!-- EJERCICIO 2 -->
+  <section class="block" id="ejercicio2">
+    <div class="block-header">
+      <span class="block-num">5</span>
+      <div><span class="block-title">Ejercicio libre: vuestra pregunta</span><span class="block-meta">15 min</span></div>
+    </div>
+
+    <p>Ahora es vuestro turno. Usad el proyecto &laquo;Copiloto PubMed&raquo; con una pregunta real o con uno de estos escenarios:</p>
+
+    <div class="case-card">
+      <strong>Opción A:</strong> Un pediatra quiere saber si la miel es efectiva para reducir la tos nocturna en niños con infecciones de vías respiratorias altas, comparado con no dar tratamiento.
+    </div>
+
+    <div class="case-card">
+      <strong>Opción B:</strong> Una enfermera de oncología necesita evidencia sobre si los programas de ejercicio físico durante la quimioterapia reducen la fatiga en pacientes con cáncer de mama.
+    </div>
+
+    <div class="case-card">
+      <strong>Opción C:</strong> Un farmacéutico hospitalario quiere comparar la seguridad de los anticoagulantes orales directos (ACOD) frente a warfarina en pacientes mayores de 80 años con fibrilación auricular.
+    </div>
+
+    <h3>Pasos a seguir</h3>
+    <ol>
+      <li>Elegid un escenario (o usad vuestra propia pregunta)</li>
+      <li>Pedid a ChatGPT el análisis PICO (paso 0)</li>
+      <li>Seguid el proceso paso a paso, validando MeSH en el navegador</li>
+      <li>Copiad la estrategia final y ejecutadla en PubMed</li>
+      <li>Compartid el número de resultados con ChatGPT para la revisión PRESS</li>
+    </ol>
+
+    <div class="tip-box">
+      <strong>Si no os da tiempo a completar todo:</strong> no pasa nada. El proyecto queda guardado en vuestro ChatGPT y podéis continuar después. Lo importante es entender el proceso y el valor de la validación MeSH.
+    </div>
+  </section>
+
+  <!-- PRESS -->
+  <section class="block" id="press">
+    <div class="block-header">
+      <span class="block-num">6</span>
+      <div><span class="block-title">Checklist PRESS simplificado</span></div>
+    </div>
+
+    <p>La <strong>metodología PRESS</strong> (Peer Review of Electronic Search Strategies, 2015) es un marco para evaluar la calidad de las estrategias de búsqueda. ChatGPT puede hacer una primera revisión, pero el bibliotecario debe verificar.</p>
+
+    <table>
+      <thead><tr><th>Ítem</th><th>Pregunta</th></tr></thead>
+      <tbody>
+        <tr><td>Traducción</td><td>¿Se han traducido correctamente los conceptos PICO a términos de búsqueda?</td></tr>
+        <tr><td>Vocabulario</td><td>¿Se combinan adecuadamente texto libre y MeSH?</td></tr>
+        <tr><td>Booleanos</td><td>¿Los operadores AND/OR están correctamente aplicados?</td></tr>
+        <tr><td>Truncamiento</td><td>¿Se ha usado truncamiento de forma apropiada?</td></tr>
+        <tr><td>Ortografía</td><td>¿La ortografía (en inglés) y la sintaxis son correctas?</td></tr>
+        <tr><td>Filtros</td><td>¿Los límites son apropiados sin ser excesivamente restrictivos?</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Ítems adicionales para búsquedas comparativas</h3>
+    <ul>
+      <li>¿Existe representación explícita de ambos contextos si la pregunta es comparativa?</li>
+      <li>¿El bloque Outcome incluye términos generales y específicos?</li>
+      <li>¿Se aplican operadores de proximidad <code>[tiab:~N]</code> en términos compuestos cuando procede?</li>
+      <li>¿Se incluyen descriptores MeSH de servicios o niveles asistenciales relevantes?</li>
+    </ul>
+
+  </section>
+
+  <!-- RESUMEN -->
+  <section class="block" id="resumen">
+    <div class="block-header">
+      <span class="block-num">7</span>
+      <div><span class="block-title">Resumen y recursos</span></div>
+    </div>
+
+    <h3>Qué hemos aprendido</h3>
+    <ul>
+      <li>Cómo crear un proyecto en ChatGPT con instrucciones específicas para búsquedas</li>
+      <li>El proceso paso a paso: PICO &#8594; términos &#8594; traducción &#8594; MeSH &#8594; estrategia &#8594; PRESS</li>
+      <li>La validación MeSH manual es obligatoria (ChatGPT inventa descriptores)</li>
+      <li>La estrategia final se ejecuta siempre en PubMed, no en ChatGPT</li>
+      <li>El bibliotecario mantiene el control en cada paso</li>
+    </ul>
+
+    <h3>Flujo de trabajo resumido</h3>
+
+    <div class="step">
+      <span class="step-num">1</span>
+      <div class="step-content"><strong>Pregunta clínica</strong> &#8594; ChatGPT analiza y estructura en PICO</div>
+    </div>
+    <div class="step">
+      <span class="step-num">2</span>
+      <div class="step-content"><strong>Términos y sinónimos</strong> &#8594; ChatGPT propone, bibliotecario valida</div>
+    </div>
+    <div class="step">
+      <span class="step-num">3</span>
+      <div class="step-content"><strong>Validación MeSH</strong> &#8594; Bibliotecario en meshb.nlm.nih.gov (obligatorio)</div>
+    </div>
+    <div class="step">
+      <span class="step-num">4</span>
+      <div class="step-content"><strong>Estrategia PubMed</strong> &#8594; ChatGPT construye, bibliotecario verifica sintaxis</div>
+    </div>
+    <div class="step">
+      <span class="step-num">5</span>
+      <div class="step-content"><strong>Ejecución en PubMed</strong> &#8594; Copiar y pegar en Advanced Search</div>
+    </div>
+    <div class="step">
+      <span class="step-num">6</span>
+      <div class="step-content"><strong>Revisión PRESS</strong> &#8594; ChatGPT sugiere mejoras, bibliotecario decide</div>
+    </div>
+
+    <h3>Enlaces útiles</h3>
+    <a href="https://chatgpt.com" target="_blank" class="tool-link">&#8599; ChatGPT</a>
+    <a href="https://meshb.nlm.nih.gov/search" target="_blank" class="tool-link">&#8599; MeSH Browser</a>
+    <a href="https://pubmed.ncbi.nlm.nih.gov/advanced/" target="_blank" class="tool-link">&#8599; PubMed Advanced Search</a>
+
+    <h3>Sintaxis rápida de PubMed</h3>
+    <table>
+      <thead><tr><th>Elemento</th><th>Sintaxis</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td>Descriptor MeSH</td><td>"Término"[MeSH Terms]</td><td>"Stroke"[MeSH Terms]</td></tr>
+        <tr><td>Texto libre (título/abstract)</td><td>término[tiab]</td><td>telerehabilitation[tiab]</td></tr>
+        <tr><td>Texto libre (amplio)</td><td>término[tw]</td><td>stroke[tw]</td></tr>
+        <tr><td>Truncamiento</td><td>termin*[tiab]</td><td>rehabilitat*[tiab]</td></tr>
+        <tr><td>Proximidad</td><td>"t1 t2"[tiab:~N]</td><td>"functional recovery"[tiab:~3]</td></tr>
+        <tr><td>OR (dentro de bloque)</td><td>t1 OR t2</td><td>stroke OR "cerebrovascular accident"</td></tr>
+        <tr><td>AND (entre bloques)</td><td>(bloque1) AND (bloque2)</td><td>(stroke) AND (telerehabilitation)</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+</div>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <p>
+    <strong>María García-Puente</strong> &middot; <a href="https://alterbiblio.com" target="_blank">AlterBiblio</a><br>
+    Taller REBISALUD &middot; IA práctica para la búsqueda y extracción de información científica &middot; Marzo 2026
+  </p>
+</footer>
+
+<script>
+// Copy prompt
+function copyPrompt(btn) {
+  const text = btn.parentElement.textContent.replace('Copiar', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Copy instructions
+function copyInstructions(btn) {
+  const text = btn.parentElement.textContent.replace('Copiar', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copiado';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+// Active sidebar
+const sections = document.querySelectorAll('.block');
+const navLinks = document.querySelectorAll('.sidebar-nav a');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      navLinks.forEach(l => l.classList.remove('active'));
+      const id = entry.target.id;
+      const active = document.querySelector(`.sidebar-nav a[href="#${id}"]`);
+      if (active) active.classList.add('active');
+    }
+  });
+}, { rootMargin: '-20% 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+
+<script>
+// Caducidad: 10 de abril de 2026
+(function() {
+  var expiry = new Date('2026-04-10T23:59:59');
+  if (new Date() > expiry) {
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#F0F2F5;font-family:Montserrat,sans-serif;"><div style="text-align:center;max-width:500px;padding:2rem;"><h1 style="color:#1B3A5C;font-size:1.5rem;margin-bottom:1rem;">Este contenido ya no está disponible</h1><p style="color:#64748B;font-size:0.95rem;line-height:1.6;">Los materiales de esta sesión han sido retirados.<br><br>Si necesitas acceso, contacta con:<br><a href="mailto:maria@alterbiblio.com" style="color:#B45309;">maria@alterbiblio.com</a></p></div></div>';
+  }
+})();
+</script>
+</body>
+</html>
